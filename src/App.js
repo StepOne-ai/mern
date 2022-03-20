@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+const express = require('express')
+const config = require('config')
+const path = require('path')
+const mongoose = require('mongoose')
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const app = express()
+
+app.use(express.json({ extended: true }))
+app.use('/api/auth', require('../routes/auth.routes'))
+app.use('/api/link', require('../routes/link.routes'))
+app.use('/t', require('../routes/redirect.routes'))
+
+if (process.env.NODE_ENV === 'production') {
+  app.use('/', express.static(path.join(__dirname, 'client', 'build')))
+
+  app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
 }
 
-export default App;
+const PORT = config.get('port') || 5000
+
+async function start() {
+  try {
+    await mongoose.connect(config.get('mongoUri'), {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    app.listen(PORT, () => console.log(`App has started on port ${PORT}!`))
+  } catch (err) {
+    console.log('Server error', err.message)
+    process.exit(1)
+  }
+}
+
+start()

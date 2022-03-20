@@ -1,0 +1,6 @@
+{
+    "port": 5000,
+    "jwtSecret": "stephen markman fucked",
+    "mongoUri": "mongodb+srv://stepan:Stepan2005@cluster0.guzyb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "baseUrl": "http://localhost:5000"
+}
